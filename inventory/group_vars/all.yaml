@@ -1,0 +1,19 @@
+---
+k3s_version: v1.22.7+k3s1
+# this is the user that has ssh access to these machines
+ansible_user: kevin
+systemd_dir: /etc/systemd/system
+
+# interface which will be used for flannel
+flannel_iface: "eth0"
+
+# apiserver_endpoint is virtual ip-address which will be configured on each master
+apiserver_endpoint: "10.10.50.100"
+
+# k3s_token is required  masters can talk together securely
+# this token should be alpha numeric only
+k3s_token: "some-SUPER-DEDEUPER-secret-password"
+
+# change these to your liking, the only required one is--no-deploy servicelb
+extra_server_args: "--disable 'servicelb, traefik, local-storage' --flannel-backend=none --disable-network-policy"
+extra_agent_args: ""
