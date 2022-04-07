@@ -1,12 +1,13 @@
 ---
 
-- name: Install default packages
+- name: Install IPTables
   become: yes
   apt:
-    name: "{{ base_pkg }}"
+    name: iptables
     update_cache: yes
     state: present
     install_recommends: no
+  register: iptables_installed
   when: ansible_distribution == 'Debian' and ansible_distribution_version == '10' or ansible_distribution_version == '11'
 
 - name: Switch to iptables-legacy
@@ -15,4 +16,6 @@
     path: /usr/sbin/iptables-legacy
     link: /etc/alternatives/iptables
   notify: Reboot host and wait for it to restart
-  when: ansible_distribution == 'Debian' and ansible_distribution_version == '10' or ansible_distribution_version == '11'
+  when: 
+  - ansible_distribution == 'Debian' and ansible_distribution_version == '10' or ansible_distribution_version == '11'
+  - iptables_installed is succeeded
