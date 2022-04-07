@@ -13,7 +13,7 @@
 - hosts: controlplanes
   become: yes
   roles:
- - k3s/controlplane
+  - k3s/controlplane
 
 # - hosts: nodes
 #   become: yes
