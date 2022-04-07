@@ -1,0 +1,43 @@
+[Unit]
+Description=Lightweight Kubernetes
+Documentation=https://k3s.io
+Wants=network-online.target
+After=network-online.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=notify
+KillMode=process
+Delegate=yes
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNOFILE=1048576
+LimitNPROC=infinity
+LimitCORE=infinity
+TasksMax=infinity
+TimeoutStartSec=0
+Restart=always
+RestartSec=5s
+ExecStartPre=-/sbin/modprobe br_netfilter
+ExecStartPre=-/sbin/modprobe overlay
+
+{% if inventory_hostname == groups['controlplanes'][0] %}
+ExecStart=/usr/local/bin/k3s \
+    server \
+        '--cluster-init' \
+        '--token' \
+        '{{ k3s_token }}' \
+        '{{ extra_server_args }}' \
+        '--tls-san' \
+        '{{ apiserver_endpoint }}' \
+{% else %}
+ExecStart=/usr/local/bin/k3s \
+    server \
+        '--server' \
+        'https://{{ apiserver_endpoint }}:6443' \
+        '--token' \
+        '{{ k3s_token }}' \
+        '{{ extra_server_args }}' \
+{% endif %}

@@ -1,4 +1,5 @@
 ---
+
 k3s_version: v1.22.7+k3s1
 # this is the user that has ssh access to these machines
 ansible_user: kevin
