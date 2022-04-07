@@ -29,7 +29,10 @@ ExecStart=/usr/local/bin/k3s \
         '--cluster-init' \
         '--token' \
         '{{ k3s_token }}' \
-        '{{ extra_server_args }}' \
+        '--disable' \
+        'servicelb, traefik, local-storage' \
+        '--flannel-backend=none' \
+        '--disable-network-policy' \
         '--tls-san' \
         '{{ apiserver_endpoint }}' \
 {% else %}
@@ -39,5 +42,8 @@ ExecStart=/usr/local/bin/k3s \
         'https://{{ apiserver_endpoint }}:6443' \
         '--token' \
         '{{ k3s_token }}' \
-        '{{ extra_server_args }}' \
+        '--disable' \
+        'servicelb, traefik, local-storage' \
+        '--flannel-backend=none' \
+        '--disable-network-policy' \
 {% endif %}
