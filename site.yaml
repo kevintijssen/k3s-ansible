@@ -11,8 +11,8 @@
 #  - k3s
 
 - hosts: controlplanes
- become: yes
- roles:
+  become: yes
+  roles:
  - k3s/controlplane
 
 # - hosts: nodes
