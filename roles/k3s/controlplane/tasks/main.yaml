@@ -1,6 +1,6 @@
 ---
 
-- Setup First Controlplane Node
+- name: Setup First Controlplane Node
   block:
 
   - name: Copy K3s service file
@@ -11,7 +11,7 @@
       owner: root
       group: root
       mode: 0644
-      
+
   - name: Enable and check K3s service
     systemd:
       name: k3s
