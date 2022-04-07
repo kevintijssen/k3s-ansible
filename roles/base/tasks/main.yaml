@@ -3,7 +3,7 @@
 - name: Install default packages
   become: yes
   apt:
-    name: "{{ base_packages }}"
+    name: "{{ base_pkg }}"
     update_cache: yes
     state: present
     install_recommends: no
