@@ -14,7 +14,7 @@
       mode: 0644
     notify: 
     - Restart k3s service
-    - Wait until k3s service is started
+    - Wait for k3s
 
   - name: Install Cilium
     template:
@@ -52,7 +52,7 @@
       group: root
     notify:
     - Restart k3s service
-    - Wait until k3s service is started
+    - Wait for k3s
 
   when: ansible_host != groups['controlplanes'][0]
 
