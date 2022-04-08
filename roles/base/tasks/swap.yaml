@@ -1,7 +1,7 @@
 ---
 
-- name: Disable SWAP permanently
-  register: swapoff
+- name: Remove SWAP from /etc/fstab
+  register: remove_swap
   replace:
     path: /etc/fstab
     regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
@@ -9,4 +9,4 @@
 
 - name: Disable SWAP
   shell: "swapoff -a"
-  when: swapoff is changed
+  when: remove_swap is changed
