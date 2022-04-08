@@ -21,7 +21,23 @@
       enabled: yes
     when: k3s_service is changed
 
-  when: "inventory_host == groups['controlplanes'][0]"
+  - name: Install Cilium
+    template:
+      src: "cilium.yaml.j2"
+      dest: "/var/lib/rancher/k3s/server/manifests/cilium.yaml"
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Install Kube-vip
+    template:
+      src: "kube-vip.yaml.j2"
+      dest: "/var/lib/rancher/k3s/server/manifests/kube-vip.yaml"
+      owner: root
+      group: root
+      mode: 0644
+
+  when: inventory_host == groups['controlplanes'][0]
 
 ### Additional Controlplane Nodes
 - name: Setup Additional Controlplane Node
@@ -44,23 +60,7 @@
       enabled: yes
     when: k3s_service is changed
 
-  - name: Install Cilium
-    template:
-      src: "cilium.yaml.j2"
-      dest: "/var/lib/rancher/k3s/server/manifests/cilium.yaml"
-      owner: root
-      group: root
-      mode: 0644
-
-  - name: Install Kube-vip
-    template:
-      src: "kube-vip.yaml.j2"
-      dest: "/var/lib/rancher/k3s/server/manifests/kube-vip.yaml"
-      owner: root
-      group: root
-      mode: 0644
-
-  when: "inventory_host != groups['controlplanes'][0]"
+  when: inventory_host != groups['controlplanes'][0]
 
 ### All Controlplane Nodes
 - name: Create directory .kube
