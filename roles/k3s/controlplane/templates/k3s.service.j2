@@ -39,14 +39,5 @@ ExecStart=/usr/local/bin/k3s \
         '--tls-san' \
         '{{ apiserver_endpoint }}' \
 {% else %}
-ExecStart=/usr/local/bin/k3s \
-    server \
-        '--server' \
-        'https://{{ apiserver_endpoint }}:6443' \
-        '--token' \
-        '{{ k3s_token }}' \
-        '--disable' \
-        'servicelb, traefik, local-storage' \
-        '--flannel-backend=none' \
-        '--disable-network-policy' \
+ExecStart=/usr/local/bin/k3s server --server https://{{ apiserver_endpoint }}:6443 --token {{ k3s_token }} {{ extra_server_args | default("") }}
 {% endif %}
