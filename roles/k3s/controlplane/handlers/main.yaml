@@ -7,6 +7,6 @@
     state: restarted
     enabled: yes
 
-- name: Wait for k3s service
+- name: Wait for k3s
   wait_for:
     timeout: 30
