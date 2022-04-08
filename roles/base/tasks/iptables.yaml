@@ -19,5 +19,5 @@
     link: /etc/alternatives/iptables
   notify: Reboot host and wait for it to restart
   when: 
-  - ansible_distribution == 'Debian1' and ansible_distribution_version == '10' or ansible_distribution_version == '11'
+  - (ansible_distribution == 'Debian' and ansible_distribution_version == '10') or (ansible_distribution == 'Debian' and ansible_distribution_version == '11')
   - iptables_installed is succeeded
