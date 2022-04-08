@@ -36,7 +36,11 @@
       owner: root
       group: root
       mode: 0644
-    notify: Wait until kube-vip is Ready
+
+  - name: Wait until kube-vip is ready to accept connections
+    wait_for:
+      host: "{{ apiserver_endpoint }}"
+      port: 6443
 
   when: ansible_host == groups['controlplanes'][0]
 
