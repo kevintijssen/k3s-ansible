@@ -12,11 +12,12 @@
 
 - hosts: controlplanes
   become: yes
+  become_method: sudo
   roles:
   - k3s/controlplane
 
 - hosts: nodes
   become: yes
+  become_method: sudo
   roles:
   - k3s/node
-
