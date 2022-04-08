@@ -4,6 +4,19 @@
 - name: Setup First Controlplane Node
   block:
 
+  - name: Download k3s binary x64
+    get_url:
+      url: https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/k3s
+      checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/sha256sum-amd64.txt
+      dest: /usr/local/bin/k3s
+      owner: root
+      group: root
+      mode: 0755
+    notify:
+    - restart_k3s.service
+    when:
+    - ansible_facts.architecture == "x86_64"
+
   - name: Copy K3s service file
     register: k3s_service
     template:
@@ -48,6 +61,19 @@
 ### Additional Controlplane Nodes
 - name: Setup Additional Controlplane Node
   block:
+
+  - name: Download k3s binary x64
+    get_url:
+      url: https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/k3s
+      checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/sha256sum-amd64.txt
+      dest: /usr/local/bin/k3s
+      owner: root
+      group: root
+      mode: 0755
+    notify:
+    - restart_k3s.service
+    when: 
+    - ansible_facts.architecture == "x86_64"
 
   - name: Copy K3s service file
     register: k3s_service
