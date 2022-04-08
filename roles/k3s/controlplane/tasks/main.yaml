@@ -61,17 +61,18 @@
       name: k3s
       daemon_reload: yes
       enabled: yes
+    notify: Reboot host and wait for it to restart
     when: k3s_service is changed
-
+    
   when: ansible_host != groups['controlplanes'][0]
 
 ### All Controlplane Nodes
-- name: Create directory .kube
-  file:
-    path: ~{{ ansible_user }}/.kube
-    state: directory
-    owner: "{{ ansible_user }}"
-    mode: "u=rwx,g=rx,o="
+# - name: Create directory .kube
+#   file:
+#     path: ~{{ ansible_user }}/.kube
+#     state: directory
+#     owner: "{{ ansible_user }}"
+#     mode: "u=rwx,g=rx,o="
 
 # - name: Copy config file to user home directory
 #   copy:
