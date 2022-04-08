@@ -38,8 +38,6 @@
       mode: 0644
     notify: Wait until kube-vip is Ready
 
-  - name: Verify 
-
   when: ansible_host == groups['controlplanes'][0]
 
 ### Additional Controlplane Nodes
