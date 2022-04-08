@@ -12,7 +12,9 @@
       owner: root
       group: root
       mode: 0644
-    notify: Restart k3s service
+    notify: 
+    - Restart k3s service
+    - Wait until k3s service is started
 
   - name: Install Cilium
     template:
@@ -48,8 +50,9 @@
       dest: "{{ systemd_dir }}/k3s.service"
       owner: root
       group: root
-      mode: 0644
-    notify: Restart k3s service
+    notify:
+    - Restart k3s service
+    - Wait until k3s service is started
 
   when: ansible_host != groups['controlplanes'][0]
 
