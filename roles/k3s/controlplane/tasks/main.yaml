@@ -59,6 +59,7 @@
       state: restarted
       enabled: yes
     when: k3s_service is changed
+    notify: Give nodes a chance to join the cluster
 
   when: ansible_host != groups['controlplanes'][0]
 

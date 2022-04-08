@@ -1,0 +1,5 @@
+---
+
+- name: Give nodes a chance to join the cluster
+  wait_for:
+    timeout: 30
