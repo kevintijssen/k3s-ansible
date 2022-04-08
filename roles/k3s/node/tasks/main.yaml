@@ -1,0 +1,13 @@
+---
+
+- name: Copy K3s service file
+  register: k3s_service
+  template:
+    src: "k3s.service.j2"
+    dest: "{{ systemd_dir }}/k3s.service"
+    owner: root
+    group: root
+  notify: 
+    - restart_k3s.service
+
+- meta: flush_handlers
