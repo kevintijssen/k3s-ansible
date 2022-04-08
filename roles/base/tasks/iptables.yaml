@@ -9,8 +9,8 @@
     install_recommends: no
   when: ansible_distribution == 'Debian' and ansible_distribution_version == '10' or ansible_distribution_version == '11'
 
-- debug: msg="{{ iptables_installed.stdout_lines }}"
-  when: iptables_installed.stdout_lines is defined
+- debug: msg="{{ iptables_installed }}"
+  #when: iptables_installed.stdout_lines is defined
 
 - name: Switch to iptables-legacy
   alternatives:
