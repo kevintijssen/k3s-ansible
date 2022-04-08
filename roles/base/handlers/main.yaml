@@ -1,7 +1,6 @@
 ---
 
 - name: Reboot host and wait for it to restart
-  become: yes
   reboot:
     msg: "Reboot initiated by Ansible"
     connect_timeout: 5

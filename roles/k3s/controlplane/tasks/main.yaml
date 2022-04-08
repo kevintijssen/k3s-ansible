@@ -50,8 +50,7 @@
       owner: root
       group: root
       mode: 0644
-    notify: 
-    - Enable and Restart K3s service
+    notify: Enable and Restart K3s service
 
   when: ansible_host != groups['controlplanes'][0]
 
