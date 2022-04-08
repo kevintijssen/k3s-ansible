@@ -1,0 +1,5 @@
+---
+
+- name: Set Timezone
+  community.general.timezone:
+    name: {{ timezone }}

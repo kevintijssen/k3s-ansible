@@ -1,6 +1,0 @@
----
-
-dependencies:
-- role: iptables
-- role: timezone
-- role: k3s-installer

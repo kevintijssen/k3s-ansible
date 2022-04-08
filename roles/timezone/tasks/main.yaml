@@ -1,5 +1,0 @@
----
-
-- name: Set Timezone to (Europe/Amsterdam)
-  community.general.timezone:
-    name: Europe/Amsterdam
