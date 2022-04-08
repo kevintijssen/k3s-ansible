@@ -55,9 +55,13 @@
       dest: "{{ systemd_dir }}/k3s.service"
       owner: root
       group: root
-    notify:
-    - Restart k3s service
-    - Wait for k3s
+
+  - name: Reload systemd
+    systemd:
+      name: k3s
+      daemon_reload: yes
+      enabled: yes
+    when: k3s_service is changed
 
   when: ansible_host != groups['controlplanes'][0]
 
@@ -69,20 +73,20 @@
     owner: "{{ ansible_user }}"
     mode: "u=rwx,g=rx,o="
 
-- name: Copy config file to user home directory
-  copy:
-    src: /etc/rancher/k3s/k3s.yaml
-    dest: ~{{ ansible_user }}/.kube/config
-    remote_src: yes
-    owner: "{{ ansible_user }}"
-    mode: "u=rw,g=,o="
+# - name: Copy config file to user home directory
+#   copy:
+#     src: /etc/rancher/k3s/k3s.yaml
+#     dest: ~{{ ansible_user }}/.kube/config
+#     remote_src: yes
+#     owner: "{{ ansible_user }}"
+#     mode: "u=rw,g=,o="
 
-- name: Configure kubectl cluster to https://{{ apiserver_endpoint }}:6443
-  command: >-
-    k3s kubectl config set-cluster default
-      --server=https://{{ apiserver_endpoint }}:6443
-      --kubeconfig ~{{ ansible_user }}/.kube/config
-  changed_when: true
+# - name: Configure kubectl cluster to https://{{ apiserver_endpoint }}:6443
+#   command: >-
+#     k3s kubectl config set-cluster default
+#       --server=https://{{ apiserver_endpoint }}:6443
+#       --kubeconfig ~{{ ansible_user }}/.kube/config
+#   changed_when: true
 
 - name: Create kubectl symlink
   file:
@@ -95,3 +99,4 @@
     src: /usr/local/bin/k3s
     dest: /usr/local/bin/crictl
     state: link
+
