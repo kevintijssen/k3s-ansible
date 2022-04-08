@@ -36,6 +36,9 @@
       owner: root
       group: root
       mode: 0644
+    notify: Wait until kube-vip is Ready
+
+  - name: Verify 
 
   when: ansible_host == groups['controlplanes'][0]
 
@@ -59,7 +62,6 @@
       state: restarted
       enabled: yes
     when: k3s_service is changed
-    notify: Give nodes a chance to join the cluster
 
   when: ansible_host != groups['controlplanes'][0]
 

@@ -1,5 +1,6 @@
 ---
 
-- name: Give nodes a chance to join the cluster
-  wait_for:
-    timeout: 30
+- name: Wait until kube-vip is Ready
+  command: ping -c1 "{{ api_endpoint }}"
+  register: reachable
+  until: reachable.rc == 0
