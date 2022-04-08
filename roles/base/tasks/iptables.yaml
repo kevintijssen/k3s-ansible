@@ -3,7 +3,7 @@
 - name: Install iptables
   register: iptables_installed
   apt:
-    name: iptable
+    name: iptables
     update_cache: yes
     state: present
     install_recommends: no
