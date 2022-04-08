@@ -1,6 +1,6 @@
 ---
 
-- name: Install IPTables
+- name: Install iptables
   become: yes
   apt:
     name: iptables
