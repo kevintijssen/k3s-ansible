@@ -1,5 +1,6 @@
 ---
 
+### First Controlplane Node
 - name: Setup First Controlplane Node
   block:
 
@@ -20,6 +21,32 @@
       enabled: yes
     when: k3s_service is changed
 
+  when: "inventory_host == groups['controlplanes'][0]"
+
+### Additional Controlplane Nodes
+- name: Setup Additional Controlplane Node
+  block:
+
+  - name: Copy K3s service file
+    register: k3s_service
+    template:
+      src: "k3s.service.j2"
+      dest: "{{ systemd_dir }}/k3s.service"
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Enable and check K3s service
+    systemd:
+      name: k3s
+      daemon_reload: yes
+      state: restarted
+      enabled: yes
+    when: k3s_service is changed
+
+  when: "inventory_host != groups['controlplanes'][0]"
+
+### All Controlplane Nodes
 - name: Create directory .kube
   file:
     path: ~{{ ansible_user }}/.kube
