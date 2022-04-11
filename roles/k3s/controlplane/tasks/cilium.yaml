@@ -30,11 +30,11 @@
 
 - name: Check if Cilium is deployed
   register: cilium_deployed
-  command: cilium status | grep Cilium: | awk '{ print $4 }' | grep -wq OK
+  shell: |
+    export KUBECONFIG=/etc/rancher/k3s/k3s.yaml;
+    cilium status | grep "Cilium:" | awk '{ print $4 }' | grep -wq OK
   when:
   - cilium_cli_installed.rc == 0 or download_cilium_cli.rc == 0
-  changed_when: 
-  - cilium_deployed.rc == 1
   failed_when: 
   - cilium_deployed.rc >= 2
 
@@ -43,5 +43,5 @@
     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml;
     cilium install --version {{ cilium_version }} {{ extra_cilium_args | default("") }};
   when:
-  - (cilium_cli_installed.rc == 0 or download_cilium_cli.rc == 0) and cilium_deployed.rc == 1
+  - cilium_deployed is failed
   
