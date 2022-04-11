@@ -6,6 +6,7 @@
   ignore_errors: yes
 
 - name: Download Cilium CLI
+  register: download_cilium_cli
   shell: |
     curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-amd64.tar.gz{,.sha256sum};
     sha256sum --check cilium-linux-amd64.tar.gz.sha256sum;
@@ -18,5 +19,5 @@
     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml;
     cilium install --version {{ cilium_version }} {{ extra_cilium_args | default("") }};
   when:
-  - cilium_cli_installed.rc == 0
+  - cilium_cli_installed.rc == 0 or download_cilium_cli.rc == 0
   
