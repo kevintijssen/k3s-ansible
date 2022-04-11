@@ -26,7 +26,7 @@
     sha256sum --check cilium-linux-amd64.tar.gz.sha256sum;
     tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin;
   when:
-  - cilium_cli_installed.rc == 1 or cilium_cli.rc == 1
+  - cilium_cli_installed is changed or cilium_cli is changed
 
 - name: Check if Cilium is deployed
   register: cilium_deployed
