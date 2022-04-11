@@ -14,7 +14,8 @@
 - name: Download Cilium CLI
   register: download_cilium_cli
   shell: |
-    curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-amd64.tar.gz{,.sha256sum};
+    curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-amd64.tar.gz;
+    curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-amd64.tar.gz.sha256sum
     sha256sum --check cilium-linux-amd64.tar.gz.sha256sum;
     tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin;
   when:
