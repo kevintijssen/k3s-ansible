@@ -4,13 +4,10 @@
 timezone: Europe/Amsterdam
 
 ### K3s
-k3s_version: v1.23.4+k3s1
+k3s_version: v1.22.7+k3s1
 # this is the user that has ssh access to these machines
 ansible_user: kevin
 systemd_dir: /etc/systemd/system
-
-# interface which will be used for kube-vip
-interface_name: "eth0"
 
 # apiserver_endpoint is virtual ip-address which will be configured on each master
 apiserver_endpoint: "10.10.50.100"
@@ -22,3 +19,13 @@ k3s_token: "some-SUPER-DEDEUPER-secret-password"
 # change these to your liking, the only required one is--no-deploy servicelb
 extra_server_args: "--disable 'servicelb, traefik, local-storage' --flannel-backend=none --disable-network-policy"
 extra_agent_args: ""
+
+### Kube-vip
+# interface which will be used for kube-vip
+interface_name: "eth0"
+
+### Cilium
+# Version
+cilium_version: 1.11.2
+cilium_cli_version: 0.10.4
+extra_cilium_args: "--ipam kubernetes"

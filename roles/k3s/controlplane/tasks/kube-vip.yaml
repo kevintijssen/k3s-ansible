@@ -1,0 +1,14 @@
+---
+
+- name: Install Kube-vip
+  template:
+    src: "kube-vip.yaml.j2"
+    dest: "/var/lib/rancher/k3s/server/manifests/kube-vip.yaml"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Wait until kube-vip is ready to accept connections
+  wait_for:
+    host: "{{ apiserver_endpoint }}"
+    port: 6443
