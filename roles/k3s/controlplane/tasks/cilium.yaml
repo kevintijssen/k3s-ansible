@@ -12,7 +12,7 @@
   register: cilium_cli
   command: cilium version | grep -qw {{ cilium_cli_version }}
   when: 
-  - cilium_cli_installed.rc == 1
+  - cilium_cli_installed.rc == 0
   changed_when: 
   - cilium_cli.rc == 1
   failed_when: 
