@@ -1,33 +1,13 @@
 ---
 
-# - name: Install Cilium
-#   template:
-#     src: "cilium.yaml.j2"
-#     dest: "/var/lib/rancher/k3s/server/manifests/cilium.yaml"
-#     owner: root
-#     group: root
-#     mode: 0644
-
-# - name: Copy Cilium CLI Install-script
-#   template:
-#     src: "install_cilium_cli.sh.j2"
-#     dest: "/tmp/install_cilium_cli.sh"
-#     owner: root
-#     group: root
-#     mode: 0744
-
-# - name: Install Cilium CLI
-#   script: /tmp/install_cilium_cli.sh
-
 - name: Download Cilium CLI
   shell: |
-    curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-amd64.tar.gz;
-    curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-amd64.tar.gz.sha256sum;
+    curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-amd64.tar.gz{,.sha256sum};
     sha256sum --check cilium-linux-amd64.tar.gz.sha256sum;
     tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin;
 
 - name: Deploy Cilium
   shell: |
     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml;
-    cilium install {{ extra_cilium_args | default("") }};
+    cilium install --version {{ cilium_version }} {{ extra_cilium_args | default("") }};
   
