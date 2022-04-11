@@ -3,13 +3,20 @@
 - name: Check if Cilium CLI is installed
   register: cilium_cli_installed
   command: which cilium
-  failed_when: cilium_cli_installed.rc >= 2
+  changed_when: 
+  - cilium_cli_installed.rc == 1
+  failed_when: 
+  - cilium_cli_installed.rc >= 2
 
 - name: Check Cilium CLI version
   register: cilium_cli
   command: cilium version | grep -qw {{ cilium_cli_version }}
-  when: cilium_cli_installed.rc == 0
-  failed_when: cilium_cli.rc >= 2
+  when: 
+  - cilium_cli_installed.rc == 0
+  changed_when: 
+  - cilium_cli.rc == 1
+  failed_when: 
+  - cilium_cli.rc >= 2
 
 - name: Download Cilium CLI
   register: download_cilium_cli
@@ -26,6 +33,8 @@
   command: "cilium status | grep Cilium: | awk '{ print $4 }' | grep -wq OK"
   when:
   - cilium_cli_installed.rc == 0 or download_cilium_cli.rc == 0
+  changed_when: 
+  - cilium_deployed.rc == 1
   failed_when: 
   - cilium_deployed.rc >= 2
 
