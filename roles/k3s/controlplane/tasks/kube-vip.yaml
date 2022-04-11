@@ -12,3 +12,8 @@
   wait_for:
     host: "{{ apiserver_endpoint }}"
     port: 6443
+
+- name: Delete kube-vip manifest. It has done it's job
+  file:
+    path: /var/lib/rancher/k3s/server/manifests/kube-vip.yaml
+    state: absent
