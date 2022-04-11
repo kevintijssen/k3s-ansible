@@ -26,6 +26,6 @@ interface_name: "eth0"
 
 ### Cilium
 # Version
-cilium_version: v1.11.2
+cilium_version: v1.11.3
 cilium_cli_version: v0.10.4
 extra_cilium_args: "--ipam kubernetes"
