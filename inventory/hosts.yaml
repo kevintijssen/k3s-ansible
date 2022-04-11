@@ -5,6 +5,10 @@
 #10.10.50.104
 #10.10.50.105
 
+# [nodes]
+# 10.10.50.111
+# 10.10.50.112
+
 [k3s_cluster:children]
 controlplanes
 nodes
