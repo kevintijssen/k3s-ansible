@@ -20,12 +20,11 @@
 #   script: /tmp/install_cilium_cli.sh
 
 - name: Download Cilium CLI
-  command: "{{ item }}"
-  with_items:
-  - curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-amd64.tar.gz{,.sha256sum}
-  - sha256sum --check cilium-linux-amd64.tar.gz.sha256sum
-  - tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
-  - rm cilium-linux-amd64.tar.gz{,.sha256sum}
+  shell: |
+    curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-amd64.tar.gz{,.sha256sum}
+    sha256sum --check cilium-linux-amd64.tar.gz.sha256sum
+    tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
+    rm cilium-linux-amd64.tar.gz{,.sha256sum}
 
 - name: Deploy Cilium
   command: cilium install {{ extra_cilium_args | default("") }}
