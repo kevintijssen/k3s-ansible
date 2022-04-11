@@ -33,13 +33,15 @@
   command: k3s kubectl get deployment -n kube-system cilium-operator
   when:
   - cilium_cli_installed.rc == 0 or download_cilium_cli.rc == 0
-  failed_when: 
+  changed_when:
   - cilium_deployed.rc == 1
+  failed_when: 
+  - cilium_deployed.rc >= 2
 
 - name: Deploy Cilium
   shell: |
     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml;
     cilium install --version {{ cilium_version }} {{ extra_cilium_args | default("") }};
   when:
-  - cilium_deployed is failed
+  - cilium_deployed is changed
   
