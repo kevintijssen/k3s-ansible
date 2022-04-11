@@ -30,7 +30,7 @@
 
 - name: Check if Cilium is deployed
   register: cilium_deployed
-  command: "cilium status | grep Cilium: | awk '{ print $4 }' | grep -wq OK"
+  command: cilium status | grep Cilium: | awk '{ print $4 }' | grep -wq OK
   when:
   - cilium_cli_installed.rc == 0 or download_cilium_cli.rc == 0
   changed_when: 
