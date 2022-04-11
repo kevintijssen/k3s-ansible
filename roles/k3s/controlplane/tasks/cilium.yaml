@@ -27,5 +27,7 @@
     tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin;
 
 - name: Deploy Cilium
-  command: cilium install {{ extra_cilium_args | default("") }}
+  shell: |
+    export KUBECONFIG=/etc/rancher/k3s/k3s.yaml;
+    cilium install {{ extra_cilium_args | default("") }};
   
