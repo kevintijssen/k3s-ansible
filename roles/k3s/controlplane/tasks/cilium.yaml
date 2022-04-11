@@ -1,9 +1,8 @@
 ---
 
-- name: Check if Cilium is installed
-  shell: |
-    kubectl get deployment -n kube-system cilium-operator
-  register: cilium_installed
+- name: Check if Cilium CLI is installed
+  command: cilium version | grep -qw {{ cilium_cli_version }}
+  register: cilium_cli_installed
 
 - name: Download Cilium CLI
   shell: |
@@ -11,12 +10,12 @@
     sha256sum --check cilium-linux-amd64.tar.gz.sha256sum;
     tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin;
   when:
-  - cilium_installed.rc != 0
+  - cilium_cli_installed.rc != 0
 
 - name: Deploy Cilium
   shell: |
     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml;
     cilium install --version {{ cilium_version }} {{ extra_cilium_args | default("") }};
   when:
-  - cilium_installed.rc != 0
+  - cilium_cli_installed.rc == 0
   
