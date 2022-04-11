@@ -11,4 +11,4 @@
 
 [k3s_cluster:children]
 controlplanes
-nodes
+# nodes
