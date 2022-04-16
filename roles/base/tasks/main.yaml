@@ -2,4 +2,6 @@
 
 - import_tasks: timezone.yaml
 - import_tasks: swap.yaml
+- import_tasks: open-iscsi.yaml
+- import_tasks: nfs.yaml
 - import_tasks: iptables.yaml

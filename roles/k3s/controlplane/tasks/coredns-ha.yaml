@@ -1,0 +1,20 @@
+---
+
+  - name: Patch-file Anti-Affinity CoreDNS
+    template:
+      src: "coredns-patch.yaml.j2"
+      dest: "/tmp/coredns-patch.yaml"
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: 0664
+
+  - name: Apply Patch CoreDNS
+    command: k3s kubectl patch -n kube-system deployment coredns --patch-file /tmp/coredns-patch.yaml
+
+  - name: Install CoreDNS HPA
+    template:
+      src: "coredns-hpa.yaml.j2"
+      dest: "/var/lib/rancher/k3s/server/manifests/coredns-hpa.yaml"
+      owner: root
+      group: root
+      mode: 0644

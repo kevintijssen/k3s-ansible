@@ -17,7 +17,7 @@ apiserver_endpoint: "10.10.50.100"
 k3s_token: "some-SUPER-DEDEUPER-secret-password"
 
 # change these to your liking, the only required one is--no-deploy servicelb
-extra_server_args: "--disable 'servicelb, traefik, local-storage' --flannel-backend=none --disable-network-policy"
+extra_server_args: "--disable 'servicelb, traefik, local-storage' --flannel-backend=none --disable-network-policy --node-taint CriticalAddonsOnly=true:NoExecute"
 extra_agent_args: ""
 
 ### Kube-vip
@@ -25,7 +25,11 @@ extra_agent_args: ""
 interface_name: "eth0"
 
 ### Cilium
-# Version
-cilium_version: v1.11.2
-cilium_cli_version: v0.10.4
-extra_cilium_args: "--ipam kubernetes"
+cilium_version: "1.11.2"
+
+### MetalLB
+# Option to install MetalLB (True or False) 
+metallb_enabled: True
+metallb_speaker_version: "v0.12.1"
+metallb_controller_version: "v0.12.1"
+metallb_ip_range: "10.10.50.120-10.10.50.130"

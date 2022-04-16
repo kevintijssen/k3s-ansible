@@ -1,8 +1,0 @@
----
-
-- name: restart_k3s.service
-  command: systemctl restart k3s
-  register: k3s_started
-  retries: 3
-  delay: 5
-  until: k3s_started.rc == 0

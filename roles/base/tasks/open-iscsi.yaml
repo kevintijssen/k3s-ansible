@@ -1,0 +1,11 @@
+---
+
+- name: Install open-iscsi
+  register: iscsi_installed
+  apt:
+    name: open-iscsi
+    update_cache: yes
+    state: present
+    install_recommends: no
+  when: 
+  - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' 
