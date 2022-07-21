@@ -1,0 +1,12 @@
+---
+
+- name: Detect /var/lib/longhorn
+  stat:
+    path: /var/lib/longhorn
+  register: longhorn_dir
+
+- name: Clean /var/lib/longhorn
+  shell: |
+    rm -rf /var/lib/longhorn/*
+  when: 
+  - longhorn_dir.stat.isdir is defined

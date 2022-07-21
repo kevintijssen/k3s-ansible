@@ -1,15 +1,16 @@
 ---
 
 - name: Download k3s binary x64
+  register: k3s_downloaded
   get_url:
-    url: https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/k3s
-    checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/sha256sum-amd64.txt
+    url: https://github.com/k3s-io/k3s/releases/download/{{ kubernetes.version }}/k3s
+    checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ kubernetes.version }}/sha256sum-amd64.txt
     dest: /usr/local/bin/k3s
     owner: root
     group: root
     mode: 0755
-  when: 
-    - ansible_facts.architecture == "x86_64"
+  when:
+  - ansible_facts.architecture == "x86_64"
 
 - name: Copy K3s service file
   register: k3s_service
@@ -18,6 +19,21 @@
     dest: "{{ systemd_dir }}/k3s.service"
     owner: root
     group: root
+    mode: 0644
+
+- name: Create k3s directory
+  file:
+    path: /etc/rancher/k3s
+    state: directory
+
+- name: Copy K3s config file
+  register: k3s_config
+  template:
+    src: "k3s-config.yaml.j2"
+    dest: "/etc/rancher/k3s/config.yaml"
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Restart k3s service
   systemd:
@@ -26,10 +42,10 @@
     state: restarted
     enabled: yes
   when: 
-  - k3s_service is changed
+  - k3s_service is changed or k3s_config is changed or k3s_downloaded is changed
 
 - name: Wait for pods to start
   wait_for:
     timeout: 10
   when: 
-  - k3s_service is changed
+  - k3s_service is changed or k3s_config is changed or k3s_downloaded is changed

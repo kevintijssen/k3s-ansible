@@ -10,5 +10,10 @@
 
 - name: Wait until kube-vip is ready to accept connections
   wait_for:
-    host: "{{ apiserver_endpoint }}"
+    host: "{{ kubernetes.apiserver_endpoint }}"
     port: 6443
+
+- name: Delete Kube-vip YAML
+  file:
+    path: /var/lib/rancher/k3s/server/manifests/kube-vip.yaml
+    state: absent

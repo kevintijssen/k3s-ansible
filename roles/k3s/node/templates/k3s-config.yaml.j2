@@ -1,0 +1,3 @@
+server: https://{{ kubernetes.apiserver_endpoint }}:6443
+token: {{ kubernetes.token }}
+{{ extra_agent_args | default("") }}

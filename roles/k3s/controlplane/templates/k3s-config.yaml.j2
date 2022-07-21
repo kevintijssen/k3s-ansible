@@ -1,0 +1,11 @@
+{% if dangerzone.cluster_init == true and inventory_hostname == groups['controlplanes'][0] %}
+cluster-init: true
+tls-san:
+  - {{ kubernetes.apiserver_endpoint }}
+{% else %}
+server: https://{{ kubernetes.apiserver_endpoint }}:6443
+{% endif %}
+token: {{ kubernetes.token }}
+flannel-backend: none
+disable-network-policy: true
+{{ kubernetes.extra_server_args | default("") }}

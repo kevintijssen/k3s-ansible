@@ -1,7 +1,20 @@
 ---
 
+- import_tasks: dangerzone.yaml
+
 - import_tasks: timezone.yaml
+
 - import_tasks: swap.yaml
+
 - import_tasks: open-iscsi.yaml
+
 - import_tasks: nfs.yaml
+
+- import_tasks: bash-completion.yaml
+
+- import_tasks: multipath.yaml
+
+- import_tasks: longhorn.yaml
+  when: dangerzone.longhorn_clean_dir == true
+
 - import_tasks: iptables.yaml

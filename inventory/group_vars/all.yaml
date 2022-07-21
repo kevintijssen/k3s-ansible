@@ -1,35 +1,72 @@
 ---
 
 ### Global
+# Set timezone on each node
 timezone: Europe/Amsterdam
-
-### K3s
-k3s_version: v1.22.7+k3s1
-# this is the user that has ssh access to these machines
+# This is the user that has ssh access to these machines
 ansible_user: kevin
+# Default system dir
 systemd_dir: /etc/systemd/system
 
-# apiserver_endpoint is virtual ip-address which will be configured on each master
-apiserver_endpoint: "10.10.50.100"
-
-# k3s_token is required  masters can talk together securely
-# this token should be alpha numeric only
-k3s_token: "some-SUPER-DEDEUPER-secret-password"
-
-# change these to your liking, the only required one is--no-deploy servicelb
-extra_server_args: "--disable 'servicelb, traefik, local-storage' --flannel-backend=none --disable-network-policy --node-taint CriticalAddonsOnly=true:NoExecute"
-extra_agent_args: ""
-
-### Kube-vip
-# interface which will be used for kube-vip
-interface_name: "eth0"
+### Kubernetes
+kubernetes:
+  # Which version of K3s
+  version: v1.22.7+k3s1
+  # Apiserver_endpoint is virtual ip-address which will be configured on each master
+  apiserver_endpoint: "192.168.1.100"
+  # k3s_token is required  masters can talk together securely
+  # this token should be alpha numeric only
+  token: "some-SUPER-DEDEUPER-secret-password"
+  # change these to your liking, the only required one is--no-deploy servicelb
+  extra_server_args: | 
+      disable:
+        - servicelb
+        - traefik
+        - local-storage
+      node-taint:
+        - CriticalAddonsOnly=true:NoExecute
+      kube-apiserver-arg:
+        - default-not-ready-toleration-seconds=20
+        - default-unreachable-toleration-seconds=20
+      kube-controller-arg:
+        - node-monitor-grace-period=20s
+        - pod-eviction-timeout=20s
+      kubelet-arg:
+        - node-status-update-frequency=5s
+  extra_agent_args: |
+      kubelet-arg: node-status-update-frequency=5s
 
 ### Cilium
-cilium_version: "1.11.2"
+cilium:
+  # Option to install Cilium (True or False)
+  enabled: true
+  version: "1.11.3"
+
+### Kube-vip
+kubevip:
+  # Option to install Kube-vip (true or false) 
+  enabled: true
+  # interface which will be used for kube-vip
+  interface_name: "eth0"
 
 ### MetalLB
-# Option to install MetalLB (True or False) 
-metallb_enabled: True
-metallb_speaker_version: "v0.12.1"
-metallb_controller_version: "v0.12.1"
-metallb_ip_range: "10.10.50.120-10.10.50.130"
+metallb:
+  # Option to install MetalLB (true or false) 
+  enabled: false
+  speaker_version: "v0.12.1"
+  controller_version: "v0.12.1"
+  ip_range: "10.10.50.121-10.10.50.130"
+
+### Longhorn
+longhorn:
+  enabled: false
+  version: "1.2.4"
+
+### Dangerzone
+# WARNING!!! Watch out for these settings.
+# These could destroy a entire cluster.
+dangerzone:
+  # Option to initialize the cluster
+  cluster_init: true
+  # Option to clean Longhorn directory (true or false)
+  longhorn_clean_dir: true

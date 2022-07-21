@@ -290,7 +290,7 @@ spec:
             secretKeyRef:
               name: memberlist
               key: secretkey
-        image: quay.io/metallb/speaker:{{ metallb_speaker_version }}
+        image: quay.io/metallb/speaker:{{ metallb.speaker_version }}
         name: speaker
         ports:
         - containerPort: 7472
@@ -369,7 +369,7 @@ spec:
           value: memberlist
         - name: METALLB_DEPLOYMENT
           value: controller
-        image: quay.io/metallb/controller:{{ metallb_controller_version }}
+        image: quay.io/metallb/controller:{{ metallb.controller_version }}
         name: controller
         ports:
         - containerPort: 7472
@@ -418,4 +418,4 @@ data:
     - name: default
       protocol: layer2
       addresses:
-      - {{ metallb_ip_range }}
+      - {{ metallb.ip_range }}

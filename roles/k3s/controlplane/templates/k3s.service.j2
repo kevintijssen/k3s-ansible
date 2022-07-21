@@ -26,8 +26,5 @@ RestartSec=5s
 ExecStartPre=/bin/sh -xc '! /usr/bin/systemctl is-enabled --quiet nm-cloud-setup.service'
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
-{% if inventory_hostname == groups['controlplanes'][0] %}
-ExecStart=/usr/local/bin/k3s server --cluster-init --token {{ k3s_token }} --tls-san {{ apiserver_endpoint }} {{ extra_server_args | default("") }}
-{% else %}
-ExecStart=/usr/local/bin/k3s server --server https://{{ apiserver_endpoint }}:6443 --token {{ k3s_token }} {{ extra_server_args | default("") }}
-{% endif %}
+ExecStart=/usr/local/bin/k3s \
+    server \

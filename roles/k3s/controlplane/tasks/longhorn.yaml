@@ -1,0 +1,13 @@
+---
+
+- name: Install Longhorn 1/2
+  template:
+    src: "longhorn.yaml.j2"
+    dest: "/tmp/longhorn.yaml"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install Longhorn 2/2
+  shell: |
+    k3s kubectl apply -f /tmp/longhorn.yaml

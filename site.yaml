@@ -1,19 +1,25 @@
 - hosts: all
-  gather_facts: yes
-  become: yes
+  gather_facts: true
+  become: true
   become_method: sudo
   roles:
   - base
 
 - hosts: controlplanes
-  become: yes
+  become: true
   become_method: sudo
   serial: 1
   roles:
   - k3s/controlplane
 
 - hosts: nodes
-  become: yes
+  become: true
   become_method: sudo
   roles:
   - k3s/node
+
+- hosts: cluster
+  become: true
+  become_method: sudo
+  roles:
+  - k3s/global

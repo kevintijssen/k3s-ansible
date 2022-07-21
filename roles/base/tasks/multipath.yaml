@@ -1,0 +1,42 @@
+---
+
+- name: Install multipath-tools
+  register: multipath_installed
+  apt:
+    name: multipath-tools
+    update_cache: yes
+    state: present
+    install_recommends: no
+  when: 
+  - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Creating empty config-file if not exists
+  copy:
+    content: ""
+    dest: /etc/multipath.conf
+    force: no
+    group: root
+    owner: root
+    mode: 0644
+
+- name: Configure Multipath
+  register: multipath_config
+  blockinfile:
+    path: /etc/multipath.conf
+    block: |
+      defaults {
+          user_friendly_names yes
+      }
+
+      blacklist {
+          devnode "^sd[a-z0-9]+"
+      }
+
+- name: Restart Multipath
+  systemd:
+    name: multipathd
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+  when: 
+  - multipath_config is changed

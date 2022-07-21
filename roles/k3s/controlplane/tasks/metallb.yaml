@@ -1,9 +1,13 @@
 ---
 
-- name: Install MetalLB
+- name: Install MetalLB 1/2
   template:
     src: "metallb.yaml.j2"
-    dest: "/var/lib/rancher/k3s/server/manifests/metallb.yaml"
+    dest: "/tmp/metallb.yaml"
     owner: root
     group: root
     mode: 0644
+
+- name: Install MetalLB 2/2
+  shell: |
+    k3s kubectl apply -f /tmp/metallb.yaml

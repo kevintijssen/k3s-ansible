@@ -1,0 +1,19 @@
+---
+
+- name: Install bash-completion
+  register: bash_completion_installed
+  apt:
+    name: bash-completion
+    update_cache: yes
+    state: present
+    install_recommends: no
+  when: 
+  - ansible_distribution == 'Debian'
+
+- name: Create /etc/bash_completion.d/
+  file:
+    path: /etc/bash_completion.d/
+    state: directory
+    mode: 0755
+  when:
+  - bash_completion_installed is succeeded

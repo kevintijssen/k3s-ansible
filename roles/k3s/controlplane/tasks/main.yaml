@@ -5,9 +5,10 @@
   block:
 
   - name: Download k3s binary x64
+    register: k3s_downloaded
     get_url:
-      url: https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/k3s
-      checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/sha256sum-amd64.txt
+      url: https://github.com/k3s-io/k3s/releases/download/{{ kubernetes.version }}/k3s
+      checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ kubernetes.version }}/sha256sum-amd64.txt
       dest: /usr/local/bin/k3s
       owner: root
       group: root
@@ -24,6 +25,20 @@
       group: root
       mode: 0644
 
+  - name: Create k3s directory
+    file:
+      path: /etc/rancher/k3s
+      state: directory
+
+  - name: Copy K3s config file
+    register: k3s_config
+    template:
+      src: "k3s-config.yaml.j2"
+      dest: "/etc/rancher/k3s/config.yaml"
+      owner: root
+      group: root
+      mode: 0644
+
   - name: Restart k3s service
     systemd:
       name: k3s
@@ -31,13 +46,13 @@
       state: restarted
       enabled: yes
     when: 
-    - k3s_service is changed
+    - k3s_service is changed or k3s_config is changed or k3s_downloaded is changed
 
   - name: Wait for pods to start
     wait_for:
       timeout: 10
     when: 
-    - k3s_service is changed
+    - k3s_service is changed or k3s_config is changed or k3s_downloaded is changed
 
   - name: Install Cilium
     template:
@@ -46,6 +61,7 @@
       owner: root
       group: root
       mode: 0644
+    when: cilium.enabled is true
 
   - import_tasks: coredns-ha.yaml
     vars:
@@ -55,26 +71,36 @@
     - k3s_service is changed
 
   - import_tasks: kube-vip.yaml
+    when: kubevip.enabled is true
 
   - import_tasks: metallb.yaml
-    when: metallb_enabled | bool == True
+    when: metallb.enabled is true
+
+  - import_tasks: longhorn.yaml
+    when: longhorn.enabled is true  
+
+  - name: Delete Cilium YAML
+    file:
+      path: /var/lib/rancher/k3s/server/manifests/cilium.yaml
+      state: absent
 
   when: 
-  - ansible_host == groups['controlplanes'][0]
+  - ansible_host == groups['controlplanes'][0] and dangerzone.cluster_init is true
 
 ### Additional Controlplane Nodes
 - name: Setup Additional Controlplane Node
   block:
 
   - name: Download k3s binary x64
-    get_url:
-      url: https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/k3s
-      checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/sha256sum-amd64.txt
+    register: k3s_downloaded
+    copy:
+      src: "{{ kubernetes.version }}/k3s"
+      checksum: "94df78893cf486bafe078ba076b903026fec8aad"
       dest: /usr/local/bin/k3s
       owner: root
       group: root
       mode: 0755
-    when: 
+    when:
     - ansible_facts.architecture == "x86_64"
 
   - name: Copy K3s service file
@@ -85,6 +111,20 @@
       owner: root
       group: root
 
+  - name: Create k3s directory
+    file:
+      path: /etc/rancher/k3s
+      state: directory
+
+  - name: Copy K3s config file
+    register: k3s_config
+    template:
+      src: "k3s-config.yaml.j2"
+      dest: "/etc/rancher/k3s/config.yaml"
+      owner: root
+      group: root
+      mode: 0644
+
   - name: Restart k3s service
     systemd:
       name: k3s
@@ -92,15 +132,15 @@
       state: restarted
       enabled: yes
     when: 
-    - k3s_service is changed
+    - k3s_service is changed or k3s_config is changed or k3s_downloaded is changed
 
   - name: Wait for pods to start
     wait_for:
       timeout: 10
     when: 
-    - k3s_service is changed
+    - k3s_service is changed or k3s_config is changed or k3s_downloaded is changed
     
-  when: ansible_host != groups['controlplanes'][0]
+  when: ansible_host != groups['controlplanes'][0] or dangerzone.cluster_init == false
 
 - name: Download Kubernetes Signing Key
   register: k8s_gpg
@@ -131,10 +171,10 @@
   - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' 
   - k8s_repo is succeeded
 
-- name: Configure kubectl cluster to https://{{ apiserver_endpoint }}:6443
+- name: Configure kubectl cluster to https://{{ kubernetes.apiserver_endpoint }}:6443
   command: >-
     k3s kubectl config set-cluster default
-      --server=https://{{ apiserver_endpoint }}:6443
+      --server=https://{{ kubernetes.apiserver_endpoint }}:6443
       --kubeconfig /etc/rancher/k3s/k3s.yaml
   changed_when: true
 
@@ -153,9 +193,6 @@
     owner: "{{ ansible_user }}"
     mode: "u=rw,g=,o="
 
-- name: Create crictl symlink 
-  file:
-    src: /usr/local/bin/k3s
-    dest: /usr/local/bin/crictl
-    state: link
-
+- name: Auto-completion kubectl
+  shell: |
+    kubectl completion bash > /etc/bash_completion.d/kubectl
