@@ -93,9 +93,9 @@
 
   - name: Download k3s binary x64
     register: k3s_downloaded
-    copy:
-      src: "{{ kubernetes.version }}/k3s"
-      checksum: "94df78893cf486bafe078ba076b903026fec8aad"
+    get_url:
+      url: https://github.com/k3s-io/k3s/releases/download/{{ kubernetes.version }}/k3s
+      checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ kubernetes.version }}/sha256sum-amd64.txt
       dest: /usr/local/bin/k3s
       owner: root
       group: root
